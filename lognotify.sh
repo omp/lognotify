@@ -3,16 +3,16 @@
 # Copyright 2010 David Vazgenovich Shakaryan <dvshakaryan@gmail.com>
 # Distributed under the terms of the GNU General Public License v3
 
-if [ $# != 3 ]; then
+CACHEDIR="${HOME}/.cache/lognotify"
+CONFIGDIR="${HOME}/.config/lognotify"
+
+if [ $# != 1 ]; then
 	echo "$0: incorrect number of arguments" >&2
 	exit 1
 fi
 
 IDENTIFIER="$1"
-SERVER="$2"
-LOGPATH="$3"
-
-CACHEDIR="${HOME}/.cache/lognotify"
+source "${CONFIGDIR}/${IDENTIFIER}"
 
 # Setup cache directory if nonexistent.
 if [ ! -d "${CACHEDIR}" ]; then
