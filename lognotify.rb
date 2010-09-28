@@ -91,9 +91,11 @@ ARGV.each do |identifier|
 
   puts '* Number of new lines: ' + newlines.lines.count.to_s
 
-  print '* Appending new lines to cached log... '
-  append_lines(identifier, newlines)
-  puts 'Done'
+  unless newlines.lines.count.zero?
+    print '* Appending new lines to cached log... '
+    append_lines(identifier, newlines)
+    puts 'Done'
 
-  puts newlines
+    puts newlines
+  end
 end
