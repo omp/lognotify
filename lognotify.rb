@@ -14,8 +14,8 @@ def parse identifier
   conf = Hash.new
   file = File.expand_path(CONFIG_DIR + '/' + identifier + '.conf')
 
-  File.open(file) do |read|
-    read.each_line do |line|
+  File.open(file) do |contents|
+    contents.each_line do |line|
       # Remove whitespace from beginning of line, allowing for indentation.
       line.lstrip!
 
@@ -24,7 +24,7 @@ def parse identifier
         key, value = line.split('=', 2)
 
         # Raise an error if line does not contain a key/value pair.
-        raise 'Check line ' + read.lineno.to_s + ' for errors.' if value.nil?
+        raise 'Error on line ' + contents.lineno.to_s + '.' if value.nil?
 
         conf[key.strip.to_sym] = value.strip
       end
