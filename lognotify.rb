@@ -49,6 +49,15 @@ def retrieve_lines path, lines, hostname
   return %x[ssh #{hostname} "#{command}"]
 end
 
+# Append new lines to cached log.
+def append_lines identifier, lines
+  filepath = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
+  file = File.open(filepath, 'a')
+
+  file.print lines
+  file.close
+end
+
 # Output all messages immediately, as opposed to buffering.
 STDOUT.sync = true
 
@@ -65,6 +74,10 @@ ARGV.each do |identifier|
   puts 'Done'
 
   puts '* Number of new lines: ' + newlines.lines.count.to_s
-  puts
+
+  print '* Appending new lines to cached log... '
+  append_lines(identifier, newlines)
+  puts 'Done'
+
   puts newlines
 end
