@@ -9,6 +9,22 @@
 #
 # Retrieve additions to remote log files via SSH. Log files are cached locally
 # and only new lines are fetched from the server.
+#
+# To use, create a configuraton file, such as ~/.config/lognotify/identifier,
+# with the following settings:
+#
+#     SSH_OPTIONS=""  Options for SSH command. [Can be empty.]
+#     SSH_HOSTNAME="" Hostname of SSH server.
+#     LOGPATH=""      Path of log file on server.
+#
+# Afterwards, simply run the script with the identifier as an argument:
+#
+#     lognotify.sh identifier
+#
+# During the initial run, a cache file will be created and all lines will be
+# retrieved. On any subsequent runs, only new lines will be retrieved and
+# outputted, as well as appended to the cache file, which should be identical
+# to the log file on the sever.
 
 # Location of the cache and configuration directories.
 CACHEDIR="${HOME}/.cache/lognotify"
