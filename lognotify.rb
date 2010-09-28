@@ -7,6 +7,8 @@
 # Distributed under the terms of the GNU General Public License v3.
 # See http://www.gnu.org/licenses/gpl.txt for the full license text.
 
+require 'ftools'
+
 CACHE_DIR="~/.cache/lognotify"
 CONFIG_DIR="~/.config/lognotify"
 
@@ -51,8 +53,8 @@ end
 
 # Append new lines to cached log.
 def append_lines identifier, lines
-  filepath = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
-  file = File.open(filepath, 'a')
+  path = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
+  file = File.open(path, 'a')
 
   file.print lines
   file.close
@@ -61,9 +63,23 @@ end
 # Output all messages immediately, as opposed to buffering.
 STDOUT.sync = true
 
+# Create cache directory, if nonexistent.
+path = File.expand_path(CACHE_DIR)
+unless File.directory?(path)
+  File.makedirs(path)
+  puts 'Done'
+end
+
 # Treat each argument as a log identifier.
 ARGV.each do |identifier|
   conf = parse(identifier)
+
+  # Create cache file, if nonexistent.
+  path = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
+  unless File.exist?(path)
+    File.open(path, 'w').close
+    puts 'Done'
+  end
 
   print '* Counting lines in cached log... '
   lines = count_lines(identifier)
