@@ -65,10 +65,7 @@ STDOUT.sync = true
 
 # Create cache directory, if nonexistent.
 path = File.expand_path(CACHE_DIR)
-unless File.directory?(path)
-  File.makedirs(path)
-  puts 'Done'
-end
+File.makedirs(path) unless File.directory?(path)
 
 # Treat each argument as a log identifier.
 ARGV.each do |identifier|
@@ -76,10 +73,7 @@ ARGV.each do |identifier|
 
   # Create cache file, if nonexistent.
   path = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
-  unless File.exist?(path)
-    File.open(path, 'w').close
-    puts 'Done'
-  end
+  File.open(path, 'w').close unless File.exist?(path)
 
   print '* Counting lines in cached log... '
   lines = count_lines(identifier)
