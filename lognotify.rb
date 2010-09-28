@@ -19,10 +19,9 @@
 #
 #   lognotify.rb identifier
 #
-# During the initial run, a cache file will be created and all lines will be
-# retrieved. On any subsequent runs, only new lines will be retrieved and
-# outputted, as well as appended to the cache file, which should be identical
-# to the log file on the server.
+# During the initial run, a cache file will be created and the entire log file
+# will be retrieved. On any subsequent runs, only new lines will be retrieved
+# and appended to the cached log.
 
 require 'ftools'
 
