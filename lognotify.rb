@@ -35,31 +35,36 @@ def parse identifier
   return conf
 end
 
-def determine_size identifier
+# Count lines in cached log.
+def count_lines identifier
   file = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
   return File.open(file).readlines.length
 end
 
-def acquire_new_lines conf, lines
-  command = 'cat ' + conf[:log_path]
-  command << " | sed '1," + lines.to_s + "d'" if lines > 0
-  return %x[ssh #{conf[:ssh_hostname]} "#{command}"]
+# Retrieve new lines via SSH.
+def retrieve_lines path, lines, hostname
+  command = "cat #{path}"
+  command << " | sed '1,#{lines}d'" if lines > 0
+
+  return %x[ssh #{hostname} "#{command}"]
 end
 
 # Output all messages immediately, as opposed to buffering.
 STDOUT.sync = true
 
-# Test code...
+# Treat each argument as a log identifier.
 ARGV.each do |identifier|
   conf = parse(identifier)
 
-  print '* Determining number of lines in cached log... '
-  lines = determine_size(identifier)
+  print '* Counting lines in cached log... '
+  lines = count_lines(identifier)
   puts lines
 
-  print '* Acquiring new lines via SSH... '
-  logappend = acquire_new_lines(conf, lines)
+  print '* Retrieving new lines via SSH... '
+  newlines = retrieve_lines(conf[:log_path], lines, conf[:ssh_hostname])
   puts 'Done'
+
+  puts '* Number of new lines: ' + newlines.lines.count.to_s
   puts
-  puts logappend
+  puts newlines
 end
