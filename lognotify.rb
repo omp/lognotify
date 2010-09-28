@@ -15,10 +15,10 @@ CONFIG_DIR="~/.config/lognotify"
 # Configuration file parser.
 def parse identifier
   conf = Hash.new
-  file = File.expand_path(CONFIG_DIR + '/' + identifier + '.conf')
+  path = File.expand_path(CONFIG_DIR + '/' + identifier + '.conf')
 
-  File.open(file) do |contents|
-    contents.each_line do |line|
+  File.open(path) do |file|
+    file.each_line do |line|
       # Remove whitespace from beginning of line, allowing for indentation.
       line.lstrip!
 
@@ -27,7 +27,7 @@ def parse identifier
         key, value = line.split('=', 2)
 
         # Raise an error if line does not contain a key/value pair.
-        raise 'Error reading line ' + contents.lineno.to_s + '.' if value.nil?
+        raise 'Error reading line ' + file.lineno.to_s + '.' if value.nil?
 
         conf[key.strip.to_sym] = value.strip
       end
@@ -39,8 +39,8 @@ end
 
 # Count lines in cached log.
 def count_lines identifier
-  file = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
-  return File.open(file).readlines.length
+  path = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
+  return File.open(path).readlines.length
 end
 
 # Retrieve new lines via SSH.
