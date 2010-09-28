@@ -21,14 +21,14 @@ def parse identifier
 
       # Ignore empty lines and comments.
       unless line.empty? or line[0,1] == '#'
-        key, val = line.split('=', 2)
+        key, value = line.split('=', 2)
 
         # Raise an error if line does not contain a key/value pair.
-        if val.nil?
+        if value.nil?
           raise 'Check line ' + contents.lineno.to_s + ' for errors.'
         end
 
-        conf[key.strip.to_sym] = val.strip
+        conf[key.strip.to_sym] = value.strip
       end
     end
   end
