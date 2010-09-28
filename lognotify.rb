@@ -24,7 +24,7 @@ def parse identifier
         key, value = line.split('=', 2)
 
         # Raise an error if line does not contain a key/value pair.
-        raise 'Error on line ' + contents.lineno.to_s + '.' if value.nil?
+        raise 'Error reading line ' + contents.lineno.to_s + '.' if value.nil?
 
         conf[key.strip.to_sym] = value.strip
       end
