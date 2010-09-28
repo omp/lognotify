@@ -21,7 +21,7 @@ IDENTIFIER="$1"
 if [ -f "${CONFIGDIR}/${IDENTIFIER}" ]; then
 	source "${CONFIGDIR}/${IDENTIFIER}"
 else
-	echo "$0: configuration file for specified identifier not found" >&2
+	echo "$0: configuration file not found" >&2
 	exit 1
 fi
 
