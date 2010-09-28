@@ -2,10 +2,26 @@
 #
 # lognotify.rb
 # http://github.com/omp/lognotify
+# Retrieve new lines from remote log files over SSH.
 #
 # Copyright 2010 David Vazgenovich Shakaryan <dvshakaryan@gmail.com>
 # Distributed under the terms of the GNU General Public License v3.
 # See http://www.gnu.org/licenses/gpl.txt for the full license text.
+#
+# To use, create a configuration file, such as ~/.config/lognotify/identifier,
+# with the following settings:
+#
+#   ssh_hostname = ...  Hostname of SSH server.
+#   log_path     = ...  Path of log file on server.
+#
+# Afterwards, simply run the script with the identifier as an arugment:
+#
+#   lognotify.rb identifier
+#
+# During the initial run, a cache file will be created and all lines will be
+# retrieved. On any subsequent runs, only new lines will be retrieved and
+# outputted, as well as appended to the cache file, which should be identical
+# to the log file on the server.
 
 require 'ftools'
 
