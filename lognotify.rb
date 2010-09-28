@@ -7,6 +7,7 @@
 # Distributed under the terms of the GNU General Public License v3.
 # See http://www.gnu.org/licenses/gpl.txt for the full license text.
 
+CACHE_DIR="~/.cache/lognotify"
 CONFIG_DIR="~/.config/lognotify"
 
 # Configuration file parser.
@@ -34,7 +35,13 @@ def parse identifier
   return conf
 end
 
+# Output all messages immediately, as opposed to buffering.
+STDOUT.sync = true
+
 # Test code...
 ARGV.each do |identifier|
-  puts parse(identifier).inspect
+  print '* Determining number of lines in cached log... '
+  file = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
+  lines = File.open(file).readlines.length
+  puts lines
 end
