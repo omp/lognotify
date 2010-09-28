@@ -8,8 +8,8 @@
 # Distributed under the terms of the GNU General Public License v3.
 # See http://www.gnu.org/licenses/gpl.txt for the full license text.
 #
-# To use, create a configuration file, such as ~/.config/lognotify/identifier,
-# with the following settings:
+# To use, create a configuration file, such as identifier.conf, in the
+# configuration directory, which defaults to ~/.config/lognotify/.
 #
 #   ssh_hostname = ...  Hostname of SSH server.
 #   log_path     = ...  Path of log file on server.
