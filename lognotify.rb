@@ -74,7 +74,7 @@ end
 # Retrieve new lines via SSH.
 def retrieve_lines conf, lines
   command = "cat #{conf[:path]}"
-  command << " | sed '1,#{lines}d'" if lines > 0
+  command << " | sed '1,#{lines}d'" unless lines.zero?
 
   return %x[ssh #{conf[:hostname]} "#{command}"]
 end
