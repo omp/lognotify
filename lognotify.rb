@@ -12,8 +12,8 @@
 # configuration directory, which defaults to ~/.config/lognotify/. The
 # following settings are required:
 #
-#   ssh_hostname = ...  Hostname of SSH server.
-#   log_path     = ...  Path of log file on server.
+#   hostname = ...  Hostname of SSH server.
+#   path     = ...  Path of log file on server.
 #
 # Afterwards, simply run the script with the identifier as an arugment:
 #
@@ -43,6 +43,7 @@ end
 # Configuration file parser.
 def parse identifier
   conf = Hash.new
+
   File.open(identifier.to_conf_path) do |file|
     file.each_line do |line|
       # Remove whitespace from beginning of line, allowing for indentation.
@@ -69,19 +70,18 @@ def count_lines identifier
 end
 
 # Retrieve new lines via SSH.
-def retrieve_lines path, lines, hostname
-  command = "cat #{path}"
+def retrieve_lines conf, lines
+  command = "cat #{conf[:path]}"
   command << " | sed '1,#{lines}d'" if lines > 0
 
-  return %x[ssh #{hostname} "#{command}"]
+  return %x[ssh #{conf[:hostname]} "#{command}"]
 end
 
 # Append new lines to cached log.
 def append_lines identifier, lines
-  file = File.open(identifier.to_cache_path, 'a')
-
-  file.print lines
-  file.close
+  File.open(identifier.to_cache_path, 'a') do |file|
+    file.print lines
+  end
 end
 
 # Output all messages immediately, as opposed to buffering.
@@ -104,7 +104,7 @@ ARGV.each do |identifier|
   puts lines
 
   print '* Retrieving new lines via SSH... '
-  newlines = retrieve_lines(conf[:log_path], lines, conf[:ssh_hostname])
+  newlines = retrieve_lines(conf, lines)
   puts 'Done'
 
   puts '* Number of new lines: ' + newlines.lines.count.to_s
