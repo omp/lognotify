@@ -25,15 +25,25 @@
 
 require 'ftools'
 
+# Global settings.
 CACHE_DIR="~/.cache/lognotify"
-CONFIG_DIR="~/.config/lognotify"
+CONF_DIR="~/.config/lognotify"
+
+# Methods for quickly getting file paths.
+class String
+  def to_cache_path
+    return File.expand_path(CACHE_DIR + '/' + self + '.log')
+  end
+
+  def to_conf_path
+    return File.expand_path(CONF_DIR + '/' + self + '.conf')
+  end
+end
 
 # Configuration file parser.
 def parse identifier
   conf = Hash.new
-  path = File.expand_path(CONFIG_DIR + '/' + identifier + '.conf')
-
-  File.open(path) do |file|
+  File.open(identifier.to_conf_path) do |file|
     file.each_line do |line|
       # Remove whitespace from beginning of line, allowing for indentation.
       line.lstrip!
@@ -55,8 +65,7 @@ end
 
 # Count lines in cached log.
 def count_lines identifier
-  path = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
-  return File.open(path).readlines.length
+  return File.open(identifier.to_cache_path).readlines.length
 end
 
 # Retrieve new lines via SSH.
@@ -69,8 +78,7 @@ end
 
 # Append new lines to cached log.
 def append_lines identifier, lines
-  path = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
-  file = File.open(path, 'a')
+  file = File.open(identifier.to_cache_path, 'a')
 
   file.print lines
   file.close
@@ -88,7 +96,7 @@ ARGV.each do |identifier|
   conf = parse(identifier)
 
   # Create cache file, if nonexistent.
-  path = File.expand_path(CACHE_DIR + '/' + identifier + '.log')
+  path = identifier.to_cache_path
   File.open(path, 'w').close unless File.exist?(path)
 
   print '* Counting lines in cached log... '
