@@ -24,6 +24,7 @@
 # and appended to the cached log.
 
 require 'ftools'
+require 'open3'
 
 # Global settings.
 CACHE_DIR="~/.cache/lognotify"
@@ -75,8 +76,14 @@ end
 def retrieve_lines conf, lines
   command = "cat #{conf[:path]}"
   command << " | sed '1,#{lines}d'" unless lines.zero?
+  command = "ssh #{conf[:hostname]} \"#{command}\""
 
-  return %x[ssh #{conf[:hostname]} "#{command}"]
+  Open3.popen3(command) do |stdin, stdout, stderr|
+    # Raise an error if any part of the command resulted in an error.
+    raise stderr.gets unless stderr.eof?
+
+    return stdout.gets.to_s
+  end
 end
 
 # Append new lines to cached log.
