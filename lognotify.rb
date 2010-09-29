@@ -66,7 +66,9 @@ end
 
 # Count lines in cached log.
 def count_lines identifier
-  return File.open(identifier.to_cache_path).readlines.length
+  File.open(identifier.to_cache_path) do |file|
+    return file.readlines.length
+  end
 end
 
 # Retrieve new lines via SSH.
