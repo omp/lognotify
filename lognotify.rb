@@ -26,7 +26,13 @@
 # During the initial run, a cache file will be created and the entire log file
 # will be retrieved. On any subsequent runs, only new lines will be retrieved
 # and appended to the cached log.
+#
+# Although, besides for the addition of new lines, log files should never be
+# altered, the remote log and the cached log are checked to be identical on
+# every run, by comparing MD5 hashes. If either file has erroneously been
+# altered, an error will be produced and the script will exit.
 
+require 'digest/md5'
 require 'ftools'
 require 'open3'
 
@@ -78,7 +84,8 @@ end
 
 # Retrieve new lines via SSH.
 def retrieve_lines conf, lines
-  command = "cat #{conf[:path]}"
+  command = "md5sum #{conf[:path]} | awk '{ print \\$1 }'"
+  command << " && cat #{conf[:path]}"
   command << " | sed '1,#{lines}d'" unless lines.zero?
   command = "ssh #{conf[:options]} #{conf[:hostname]} \"#{command}\""
 
@@ -86,7 +93,15 @@ def retrieve_lines conf, lines
     # Raise an error if any part of the command resulted in an error.
     raise stderr.read unless stderr.eof?
 
-    return stdout.read
+    return stdout.read.split("\n", 2)
+  end
+end
+
+# Verify that remote log and cached log are identical.
+def verify_hash identifier, hash, lines
+  File.open(identifier.to_cache_path) do |file|
+    raise "Hash check failed; delete cached log file." unless
+      hash == Digest::MD5.hexdigest(file.read + lines)
   end
 end
 
@@ -117,10 +132,13 @@ ARGV.each do |identifier|
   puts lines
 
   print '* Retrieving new lines via SSH... '
-  newlines = retrieve_lines(conf, lines)
+  hash, newlines = retrieve_lines(conf, lines)
   puts 'Done'
 
   puts '* Number of new lines: ' + newlines.lines.count.to_s
+
+  # No need to inform the user about this.
+  verify_hash(identifier, hash, newlines)
 
   unless newlines.lines.count.zero?
     print '* Appending new lines to cached log... '
