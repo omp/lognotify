@@ -15,6 +15,10 @@
 #   hostname = ...  Hostname of SSH server.
 #   path     = ...  Path of log file on server.
 #
+# The following setting is optional:
+#
+#   options  = ...  Command-line options for SSH command.
+#
 # Afterwards, simply run the script with the identifier as an arugment:
 #
 #   lognotify.rb identifier
@@ -76,7 +80,7 @@ end
 def retrieve_lines conf, lines
   command = "cat #{conf[:path]}"
   command << " | sed '1,#{lines}d'" unless lines.zero?
-  command = "ssh #{conf[:hostname]} \"#{command}\""
+  command = "ssh #{conf[:options]} #{conf[:hostname]} \"#{command}\""
 
   Open3.popen3(command) do |stdin, stdout, stderr|
     # Raise an error if any part of the command resulted in an error.
