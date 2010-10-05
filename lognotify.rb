@@ -84,9 +84,9 @@ def retrieve_lines conf, lines
 
   Open3.popen3(command) do |stdin, stdout, stderr|
     # Raise an error if any part of the command resulted in an error.
-    raise stderr.gets unless stderr.eof?
+    raise stderr.read unless stderr.eof?
 
-    return stdout.gets.to_s
+    return stdout.read
   end
 end
 
