@@ -80,8 +80,8 @@ def count_lines identifier
   count = 0
 
   File.open(identifier.to_cache_path) do |file|
-    # Process lines block-by-block to keep memory usage low.
-    while block = file.read(1024)
+    # Process file block-by-block to keep memory usage low.
+    while block = file.read(4096)
       count += block.count("\n")
     end
   end
