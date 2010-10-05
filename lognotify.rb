@@ -137,7 +137,7 @@ ARGV.each do |identifier|
 
   puts '* Number of new lines: ' + newlines.lines.count.to_s
 
-  # No need to inform the user about this.
+  # No need to inform the user of this.
   verify_hash(identifier, hash, newlines)
 
   unless newlines.lines.count.zero?
