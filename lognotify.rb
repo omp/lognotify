@@ -33,7 +33,7 @@
 # altered, an error will be produced and the script will exit.
 
 require 'digest/md5'
-require 'ftools'
+require 'fileutils'
 require 'open3'
 
 # Global settings.
@@ -117,7 +117,7 @@ STDOUT.sync = true
 
 # Create cache directory, if nonexistent.
 path = File.expand_path(CACHE_DIR)
-File.makedirs(path) unless File.directory?(path)
+FileUtils.mkpath(path) unless File.directory?(path)
 
 # Treat each argument as a log identifier.
 ARGV.each do |identifier|
